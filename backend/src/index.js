@@ -27,6 +27,16 @@ app.get('/' , (req , res) => {
         res.send(`<h1>HELLO WORLD</h1><br><h2>${body.name}<h2>`);  
 })
 
+app.get('/api/data' , (req , res) => {
+        // res.send(req.params)
+       const datas =  [{
+                id : 1,
+                title : 'Jhon Wick',
+                content : 'Movie'
+        }]
+        res.send(datas)
+})
+
 
 
 
