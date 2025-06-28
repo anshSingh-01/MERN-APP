@@ -20,6 +20,14 @@ app.use(express.urlencoded({extended:true , limit:"10kb"}))
 app.use(express.static("public"));
 app.use(cookieParser());
 
+// routes
+
+import userRouter from "./routes/user.routes.js"
+
+// routes declaration
+app.use('/api/v1/auth' ,userRouter)
+
+// http://localhost:5000/api/v1/auth/register
 try {
     app.on("error" , (error) => {
             throw error
