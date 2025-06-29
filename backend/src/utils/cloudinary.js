@@ -1,14 +1,14 @@
 import {v2 as cloudinary} from 'cloudinary'
 import fs from 'fs' // file system
-import {multer} from 'multer'
-import { resourceLimits } from 'worker_threads';
+// import {multer} from 'multer'
+// import { resourceLimits } from 'worker_threads';
 
 // file is always unlink not delete
 
  cloudinary.config({ 
         cloud_name: 'dgxyfueos', 
-        api_key: '666221465518649', 
-        api_secret: '<your_api_secret>' // Click 'View API Keys' above to copy your API secret
+        api_key: '192662395158235', 
+        api_secret: '1_1hItna8-Wa6Jp9h2nxgBpzZmE' // Click 'View API Keys' above to copy your API secret
     });
 
     const uploadOnCloud = async (localFilePath) => {
@@ -17,14 +17,13 @@ import { resourceLimits } from 'worker_threads';
                         return null
                     }
                     // upload the file on cloudinary
-                const response = await  cloudinary.v2.uploader.upload(localFilePath , {
-                        resource_type : "auto"
-                    })
-                    //file uploaded 
-                    console.log("file is uploaded on cloudinary", response.url)
-                    return url
+              const result = await cloudinary.uploader.upload(localFilePath, {
+                   resource_type: "auto",
+                  });
+                  return result;
             }
             catch(error) {
+                console.log(error.message)
                     fs.unlinkSync(localFilePath) // remove the locally saved temp file
                     return null
             }
