@@ -55,13 +55,16 @@ const userSchema = new Schema({
     }
 )
 // middle ware for encryption of password
-userSchema.pre("save" ,async function (next) {
-    if(!this.isModified("password")){
-        return next()
-    }
-        this.password = await  bcrypt.hash(this.password ,10)
-        next()
-})
+// $$$$$$$$$$$$$$$ not working $$$$$$$$$$$$$$$
+// userSchema.pre("save" ,async function (next) {
+//     if(!this.isModified("password")){
+//         return next()
+//     }
+//     console.log(this.password)
+//     this.password = await  bcrypt.hash(this.password ,10)
+//     console.log(this.password)
+//         next()
+// })
 
 
 // custom method
