@@ -281,3 +281,86 @@ export const updateUserCoverImage = AsyncHandler(async (req , res) => {
       await user.save({validateBeforeSave :false})
       return res.status(200).json(new ApiResponse(200 , user, "CoverImage is Updated"))
 })
+
+
+export const getUserChannelProfile = AsyncHandler(async (req, res) => {
+
+       // taking data from params
+       const {username} = req.params
+       
+       if(!username?.trim()){
+            throw new ApiError(400 , "username is missing")
+       }
+
+       const channel =await User.aggregate([ 
+            // pipeline 1
+                  {
+                        $match :{
+                              username : username?.toLowerCase()
+                        }
+                  },
+                  // finding subscribers
+                   // pipeline 2
+                  {
+                        $lookup :{
+                              from : "subscriptions",
+                              localField : "_id",
+                              foreignField : "channel",
+                              as : "subscribers"
+                        }
+                  },
+                  // subsribed to
+                   // pipeline 3
+                  {
+                        $lookup :{
+                              from : "subscriptions",
+                              localField : "_id",
+                              foreignField : "subscriber",
+                              as : "subscribedTo"
+                        }
+                  },
+                  //add this all to one ds
+                   // pipeline 4
+                  {
+                        $addFields : {
+                              subscribersCount : {
+                                    $size: "subscribers"
+                              },
+                              subscribedTo : {
+                                    $size : "subscribedTo"
+                              },
+                              isSubscribed :{
+                                    $cond : {
+                                          if :{$in: [req.user?._id , "$subscribers.subscriber"]},
+                                          then :true,
+                                          else:false
+                                    }
+                              }
+                        },
+                       
+                  },
+                   // pipeline 5
+                   {
+                              $project : {
+                                    fullname :1,
+                                    username :1,
+                                    subscribersCount :1,
+                                    subscribedToCount :1,
+                                    isSubscribed :1,
+                                    avatar:1,
+                                    coverImage :1,
+                                    email :1,
+                              }
+                  }
+
+       ])
+
+       if(!channel?.length){
+            throw new ApiError(404 ,"Channel does not exist")
+       }
+
+       return res.status(200).json(
+            new ApiResponse(200 , channel[0],"User Channel fetched successfuuly")
+       )
+
+})
